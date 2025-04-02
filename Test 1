@@ -1,0 +1,77 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+const questions = {
+  beginner: [
+    { question: "What is the plural of 'child'?", options: ["Childs", "Children", "Childes", "Child's"], answer: "Children" },
+    { question: "Choose the correct sentence:", options: ["She go to school.", "She goes to school.", "She going to school.", "She goed to school."], answer: "She goes to school." },
+    // Adicione mais perguntas
+  ],
+  intermediate: [
+    { question: "Which sentence is correct?", options: ["I have went to the store.", "I have gone to the store.", "I has gone to the store.", "I has went to the store."], answer: "I have gone to the store." },
+    // Adicione mais perguntas
+  ],
+  advanced: [
+    { question: "Identify the correct usage of the subjunctive mood:", options: ["If I was you, I would go.", "If I were you, I would go.", "If I am you, I would go.", "If I be you, I would go."], answer: "If I were you, I would go." },
+    // Adicione mais perguntas
+  ],
+};
+
+export default function SpeedEnglishTest() {
+  const [level, setLevel] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [finished, setFinished] = useState(false);
+
+  const startTest = (selectedLevel) => {
+    setLevel(selectedLevel);
+    setCurrentQuestion(0);
+    setScore(0);
+    setFinished(false);
+  };
+
+  const handleAnswer = (option) => {
+    if (option === questions[level][currentQuestion].answer) {
+      setScore(score + 1);
+    }
+    if (currentQuestion + 1 < questions[level].length) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setFinished(true);
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-2xl mx-auto text-center">
+      {!level ? (
+        <div>
+          <h1 className="text-2xl font-bold">Speed English Proficiency Test</h1>
+          <p>Select your level to begin:</p>
+          <div className="flex gap-4 justify-center mt-4">
+            <Button onClick={() => startTest("beginner")}>Beginner</Button>
+            <Button onClick={() => startTest("intermediate")}>Intermediate</Button>
+            <Button onClick={() => startTest("advanced")}>Advanced</Button>
+          </div>
+        </div>
+      ) : !finished ? (
+        <Card>
+          <CardContent>
+            <h2 className="text-lg font-semibold">{questions[level][currentQuestion].question}</h2>
+            <div className="grid gap-2 mt-4">
+              {questions[level][currentQuestion].options.map((option, index) => (
+                <Button key={index} onClick={() => handleAnswer(option)}>{option}</Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <div>
+          <h2 className="text-xl font-bold">Test Completed!</h2>
+          <p>Your score: {score} / {questions[level].length}</p>
+          <Button onClick={() => setLevel(null)}>Restart</Button>
+        </div>
+      )}
+    </div>
+  );
+}
